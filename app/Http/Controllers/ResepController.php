@@ -34,7 +34,7 @@ class ResepController extends Controller
         // 1. SIMULASI DETEKSI AI (Nanti diganti Python)
         // ---------------------------------------------------------
         // Spoonacular sangat pintar, kirim banyak bahan pun oke!
-        $detected_ingredients = ['chicken', 'chili']; 
+        $detected_ingredients = ['beef', 'chili']; 
         
         // ---------------------------------------------------------
         // 2. CARI RESEP (Spoonacular)
