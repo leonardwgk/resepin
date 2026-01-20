@@ -52,7 +52,7 @@
 
                     <div class="mb-3">
                         <label class="form-label fw-bold small">🚫 Bahan yang TIDAK mau dimasak:</label>
-                        <input type="text" name="custom_exclude" class="form-control" placeholder="Contoh: udang, kacang (pisahkan koma)">
+                        <input type="text" name="custom_exclude" class="form-control" placeholder="Contoh: shrimp, peanut (pisahkan koma)">
                         <div class="form-text text-muted" style="font-size: 12px;">Tulis bahan alergi atau yang tidak kamu suka.</div>
                     </div>
 

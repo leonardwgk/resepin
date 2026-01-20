@@ -4,6 +4,8 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Http;
+use Illuminate\Support\Facades\Auth;
+use App\Models\Favorite;
 
 class ResepController extends Controller
 {
@@ -105,14 +107,23 @@ class ResepController extends Controller
             'addRecipeInformation' => true,
             'fillIngredients' => true,
             'ignorePantry' => true,
-            'sort' => 'min-missing-ingredients'
+            'sort' => 'min-missing-ingredients',
+            'includeNutrition' => true
         ]);
 
         $recipes = $response->json()['results'] ?? [];
 
+        $favoriteIds = [];
+        if (Auth::check()) {
+            $favoriteIds = Favorite::where('user_id', Auth::id())
+                ->pluck('spoonacular_id')
+                ->toArray();
+        }
+
         return view('result', [
             'ingredients' => $clean_ingredients,
-            'recipes' => $recipes
+            'recipes' => $recipes,
+            'favoriteIds' => $favoriteIds
         ]);
     }
 
