@@ -58,7 +58,7 @@ class ResepController extends Controller
 
         } catch (ConnectionException $e) {
             // TAMBAHAN 3: Tangkap Error Timeout di sini
-            return back()->with('error', 'Waduh, AI-nya kelamaan mikir (Timeout > 90 detik). Coba upload foto yang lebih kecil atau coba lagi nanti.');
+            return back()->with('error', 'Coba upload foto yang lebih kecil atau coba lagi nanti.');
             
         } catch (\Exception $e) {
             // Error umum lainnya
