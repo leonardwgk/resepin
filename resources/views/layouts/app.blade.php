@@ -80,10 +80,10 @@
     </main>
 
     <div class="toast-container position-fixed bottom-0 end-0 p-3" style="z-index: 1055">
-        <div id="favToast" class="toast align-items-center text-white bg-success border-0 shadow-lg" role="alert" aria-live="assertive" aria-atomic="true" data-bs-delay="5000">
+        <div id="favToast" class="toast align-items-center text-white border-0 shadow-lg" role="alert" aria-live="assertive" aria-atomic="true" data-bs-delay="5000">
             <div class="d-flex">
                 <div class="toast-body fw-bold">
-                    <i class="bi bi-check-circle-fill me-2"></i> <span id="toast-text">Berhasil!</span>
+                    <span id="toast-icon"></span> <span id="toast-text">Notifikasi</span>
                 </div>
                 <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast" aria-label="Close"></button>
             </div>
@@ -115,6 +115,7 @@
             if (!tokenMeta) return; 
             let token = tokenMeta.getAttribute('content');
             
+            // Efek Loading
             btn.style.opacity = "0.7";
             btn.style.pointerEvents = "none";
 
@@ -132,16 +133,19 @@
                 })
             })
             .then(response => {
+                // === BAGIAN PERUBAHAN UTAMA ===
                 if (response.status === 401) {
-                    alert("Silakan login dulu!");
-                    window.location.href = "{{ route('login') }}";
-                    throw new Error("Unauthorized");
+                    // Dulu: window.location.href = ... (Redirect)
+                    // Sekarang: Tampilkan Pesan Warning saja
+                    showToast("Login untuk menyimpan resep!", "warning");
+                    throw new Error("Unauthorized"); // Hentikan proses selanjutnya
                 }
                 return response.json();
             })
             .then(data => {
                 if (data.status === 'success') {
                     
+                    // Ganti Icon Hati (Merah/Abu)
                     if (btn.classList.contains('btn-fav')) {
                         let icon = btn.querySelector('i');
                         if (data.action === 'added') {
@@ -166,28 +170,56 @@
                         }
                     }
 
-                    let toastEl = document.getElementById('favToast');
-                    let toastText = document.getElementById('toast-text');
-                    
-                    if(toastEl) {
-                        toastText.innerText = data.message;
-                        if (data.action === 'removed') {
-                            toastEl.classList.remove('bg-success');
-                            toastEl.classList.add('bg-secondary');
-                        } else {
-                            toastEl.classList.remove('bg-secondary');
-                            toastEl.classList.add('bg-success');
-                        }
-                        let toast = new bootstrap.Toast(toastEl);
-                        toast.show();
-                    }
+                    // Tampilkan Toast Sukses/Hapus
+                    let type = (data.action === 'removed') ? 'secondary' : 'success';
+                    showToast(data.message, type);
                 }
             })
-            .catch(error => console.error('Error:', error))
+            .catch(error => {
+                if (error.message !== "Unauthorized") {
+                    console.error('Error:', error);
+                }
+            })
             .finally(() => {
                 btn.style.opacity = "1";
                 btn.style.pointerEvents = "auto";
             });
+        }
+
+        // FUNGSI BANTUAN UNTUK MENAMPILKAN TOAST WARNA-WARNI
+        function showToast(message, type) {
+            let toastEl = document.getElementById('favToast');
+            let toastText = document.getElementById('toast-text');
+            let toastIcon = document.getElementById('toast-icon');
+            
+            if(toastEl) {
+                toastText.innerText = message;
+                
+                // Reset Class Warna
+                toastEl.classList.remove('bg-success', 'bg-warning', 'bg-secondary', 'bg-danger');
+                
+                // Set Warna & Ikon Baru
+                if (type === 'success') {
+                    toastEl.classList.add('bg-success');
+                    toastIcon.innerHTML = '<i class="bi bi-check-circle-fill me-2"></i>';
+                } else if (type === 'warning') {
+                    toastEl.classList.add('bg-warning', 'text-dark'); // Kuning teks hitam
+                    toastEl.classList.remove('text-white');           // Hapus teks putih khusus warning
+                    toastIcon.innerHTML = '<i class="bi bi-exclamation-triangle-fill me-2"></i>';
+                } else if (type === 'secondary') {
+                    toastEl.classList.add('bg-secondary');
+                    toastIcon.innerHTML = '<i class="bi bi-trash-fill me-2"></i>';
+                }
+
+                // Kembalikan teks putih jika bukan warning
+                if (type !== 'warning') {
+                    toastEl.classList.add('text-white');
+                    toastEl.classList.remove('text-dark');
+                }
+
+                let toast = new bootstrap.Toast(toastEl);
+                toast.show();
+            }
         }
     </script>
     
