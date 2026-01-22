@@ -1,0 +1,6 @@
+.git
+.env
+vendor
+node_modules
+storage/*.key
+test_db.php
