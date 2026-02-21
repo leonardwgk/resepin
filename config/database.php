@@ -59,20 +59,10 @@ return [
             'strict' => true,
             'engine' => null,
 
-            /*
-            ** Kalau jalanin di local uncomment ini 
-            **
-            ** 'options' => []
-            */
-
-            // --ERROR--
-            // 'options' => [
-            //     PDO::MYSQL_ATTR_SSL_CA => base_path('certs/DigiCertGlobalRootG2.crt.pem'),
-            // ],
-
             'options' => extension_loaded('pdo_mysql') ? array_filter([
+                PDO::MYSQL_ATTR_SSL_CA => env('MYSQL_ATTR_SSL_CA', base_path('certs/DigiCertGlobalRootG2.crt.pem')),
                 PDO::MYSQL_ATTR_LOCAL_INFILE => true,
-                PDO::ATTR_EMULATE_PREPARES => true, // <-- Ini triknya
+                PDO::ATTR_EMULATE_PREPARES => true,
             ]) : [],
         ],
 
